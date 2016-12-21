@@ -17,7 +17,6 @@ package com.github.stagirs.search;
 
 import com.github.stagirs.common.model.Block;
 import com.github.stagirs.common.model.Document;
-import com.github.stagirs.common.model.DocumentUtils;
 import com.github.stagirs.common.model.Point;
 import com.github.stagirs.common.model.Section;
 import com.github.stagirs.common.model.Sentence;
@@ -25,10 +24,8 @@ import com.github.stagirs.common.model.Text;
 import com.github.stagirs.common.text.TextUtils;
 import com.github.stagirs.lingvo.morpho.MorphoDictionary;
 import com.github.stagirs.lingvo.morpho.model.NormMorpho;
-import gnu.trove.list.array.TDoubleArrayList;
 import gnu.trove.list.array.TIntArrayList;
 import gnu.trove.map.hash.TObjectDoubleHashMap;
-import gnu.trove.map.hash.TObjectIntHashMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -133,6 +130,26 @@ public class Executor {
             }
             query.getTerms()[i] = set.toArray(new String[set.size()]);
         }
+    }
+    
+    public Set<Integer> sentencesForDoc(String docId, Query query){
+        Set<Integer> set = new HashSet<>();
+        query2norm(query);
+        TIntArrayList result = execute(query);
+        for (int id : result.toArray()) {
+            Object object = tagId2object.get(id);
+            if(object instanceof Sentence){
+                fillSentences(docId, (Sentence) object, set);
+            }
+        }
+        return set;
+    }
+    
+    private void fillSentences(String docId, Sentence sentence, Set<Integer> set){
+        if(!sentence.getDocId().equals(docId)){
+            return;
+        }
+        set.add(sentence.getNumber());
     }
     
     public List<SentenceInfo> sentences(Query query){

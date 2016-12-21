@@ -41,9 +41,9 @@ public class MainContriller {
     @PostConstruct
     public void init(){
         try{
-            MorphoDictionary md = MorphoDictionaryFactory.get(new File("../work/dict.opcorpora.xml"));
+            MorphoDictionary md = MorphoDictionaryFactory.get(new File("../work/stagirs/dict.opcorpora.xml"));
             List<Document> documents = new ArrayList<>();
-            for(File file : new File("../work/docs").listFiles()){
+            for(File file : new File("../work/stagirs/docs/processed").listFiles()){
                 documents.add(DocumentParser.parse(file));
             }
             executor = new Executor(documents, md);
@@ -55,22 +55,24 @@ public class MainContriller {
     @RequestMapping("/searchTags")
     public String searchTags(Model model, @RequestParam(value="query", required=false, defaultValue="") String query) {
         model.addAttribute("query", query);
-        model.addAttribute("tags", executor.sentences(new Query(query)));
+        model.addAttribute("tags", query.isEmpty() ? null: executor.sentences(new Query(query)));
         return "search";
     }
     
     @RequestMapping("/searchDocs")
     public String searchDocs(Model model, @RequestParam(value="query", required=false, defaultValue="") String query) {
         model.addAttribute("query", query);
-        model.addAttribute("tags", executor.docs(new Query(query)));
+        model.addAttribute("tags", query.isEmpty() ? null: executor.docs(new Query(query)));
         return "search";
     }
     
-//    @RequestMapping("/doc")
-//    public String doc(Model model, 
-//            @RequestParam(value="docId", defaultValue="") String docId,
-//            @RequestParam(value="query", defaultValue="") String query) {
-//        model.addAttribute("query", query);
-//        return "search";
-//    }
+    @RequestMapping("/doc")
+    public String doc(Model model, 
+            @RequestParam(value="docId", defaultValue="") String docId,
+            @RequestParam(value="query", defaultValue="") String query) {
+        model.addAttribute("query", query);
+        model.addAttribute("sentenceIds", query.isEmpty() ? null: executor.sentencesForDoc(docId, new Query(query)));
+        model.addAttribute("doc", executor.getDocument(docId));
+        return "doc";
+    }
 }
