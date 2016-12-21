@@ -2,12 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.smivle</groupId>
+    <groupId>com.github.stagirs</groupId>
     <artifactId>web</artifactId>
     <version>1.0</version>
     <packaging>war</packaging>
 
-    <name>smivle</name>
+    <name>stagirs-web</name>
 
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
@@ -16,15 +16,9 @@
     
     <dependencies>
         <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>9.4-1206-jdbc42</version>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
+            <groupId>com.github.stagirs</groupId>
+            <artifactId>common</artifactId>
+            <version>1.0</version>
             <type>jar</type>
         </dependency>
         <dependency>
@@ -66,6 +60,12 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
             <version>4.2.5.RELEASE</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.github.stagirs</groupId>
+            <artifactId>lingvo</artifactId>
+            <version>1.0</version>
             <type>jar</type>
         </dependency>
         <dependency>

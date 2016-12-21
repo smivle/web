@@ -5,7 +5,13 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link rel="stylesheet" href="static/font-awesome/css/font-awesome.min.css">
-        <title>Smivle Search System</title>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+        </script>
+        <script type="text/javascript" async
+          src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
+        </script>
+        <title>STAGIRS</title>
         <style>
             input.query{
                 font-size: 20px;
@@ -47,6 +53,13 @@
                 text-decoration: none;
                 color: #335;
             }
+            span.latex{
+                margin-left: 5px;
+                margin-right: 5px;
+            }
+            .keyword{
+                font-weight: bold;
+            }
         </style>  
         <script src="static/js/jquery-2.0.3.min.js"></script>
         <script>
@@ -54,13 +67,18 @@
                 $(".query-button").click(function(){
                     window.location = "search?query=" + $(".query").val();
                 });
+                var regex = new RegExp('('+ '${query}'.replace(/ /g,'|') +')', 'ig');
+                $.each($(".tag-block-text"), function (k, v){
+                    $(v).html($(v).html().replace(regex, '<span class="keyword">$1</span>'));
+                });
             });
+            
         </script>    
     </head>
     <body style="margin: 0 auto;    background-color: #f1f1f1;">
         <div style="height: 40px; background-color: #335;">
-            <a href="search">
-                <img style="margin-left: 20px" height="40px" src="static/smivle.png">
+            <a href="searchDocs" style="color: #fff; text-decoration: none; font-size: 30px; font-weight: bold; font-family: sans-serif;">
+                STAGIRS
             </a>
             <span style="float: right; line-height: 40px;font-size: 30px; margin-right: 20px">
                 <a href="search" style="color: #fff;">
@@ -78,10 +96,10 @@
             <c:forEach items="${tags}" var="tag">
                 <div class="tag-block">
                     <div class="tag-block-text">
-                        ${tag.text}
+                        ${tag.toString()}
                     </div>
                     <div>
-                        <a class="doc-link" href="doc?id=${tag.docHash}&query=${query}">Перейти к документу ...</a>
+                        <a class="doc-link" href="doc?id=${tag.document.id}&query=${query}">Перейти к документу ...</a>
                     </div>
                 </div>
             </c:forEach>    
