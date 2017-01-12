@@ -24,6 +24,7 @@ import com.github.stagirs.common.model.Text;
 import com.github.stagirs.common.text.TextUtils;
 import com.github.stagirs.lingvo.morpho.MorphoDictionary;
 import com.github.stagirs.lingvo.morpho.model.NormMorpho;
+import com.github.stagirs.lingvo.morpho.model.RawMorpho;
 import gnu.trove.list.array.TIntArrayList;
 import gnu.trove.map.hash.TObjectDoubleHashMap;
 import java.util.ArrayList;
@@ -58,7 +59,23 @@ public class Executor {
             return;
         }
         for(String word : TextUtils.splitWords(text, true)){
-            for(NormMorpho nf : md.getNormForm(word)){
+            List<NormMorpho> list = md.getNormForm(word);
+            if(list.isEmpty()){
+                if(!term2tagIds.containsKey(word)){
+                    term2tagIds.put(word, new int[]{tagId2object.size()});
+                }else{
+                    int[] old = term2tagIds.get(word);
+                    if(old[old.length - 1] == tagId2object.size()){
+                        continue;
+                    }
+                    int[] n = new int[old.length + 1];
+                    System.arraycopy(old, 0, n, 0, old.length);
+                    n[old.length] = tagId2object.size();
+                    term2tagIds.put(word, n);
+                }
+                continue;
+            }
+            for(NormMorpho nf : list){
                 word = nf.getWord();
                 if(!term2tagIds.containsKey(word)){
                     term2tagIds.put(word, new int[]{tagId2object.size()});
@@ -120,11 +137,35 @@ public class Executor {
         return id2doc.get(id);
     }
     
+    public Set<String> getKeywords(Query query){
+        Set<String> set = new HashSet<>();
+        for (String[] strings : query.getTerms()) {
+            for (String s : strings) {
+                List<NormMorpho> list = md.getNormForm(s);
+                if(list.isEmpty()){
+                    set.add(s);
+                    continue;
+                }
+                for(NormMorpho nf : list){
+                    for (RawMorpho raw : nf.getRawForms()) {
+                        set.add(raw.getWord());
+                    }
+                } 
+            }
+        }
+        return set;
+    }
+    
     private void query2norm(Query query){
         for (int i = 0; i < query.getTerms().length; i++) {
             Set<String> set = new HashSet<>();
             for (String word : query.getTerms()[i]) {
-                for(NormMorpho nf : md.getNormForm(word)){
+                List<NormMorpho> list = md.getNormForm(word);
+                if(list.isEmpty()){
+                    set.add(word);
+                    continue;
+                }
+                for(NormMorpho nf : list){
                     set.add(nf.getWord());
                 }    
             }

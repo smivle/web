@@ -24,15 +24,14 @@ import com.github.stagirs.common.model.Sentence;
  *
  * @author Dmitriy Malakhov
  */
-public class SentenceInfo implements Comparable<SentenceInfo>{
+public class SentenceInfo extends Info{
     private Document document;
     private Sentence sentence;
-    private double semantic;
 
     public SentenceInfo(Document document, Sentence sentence, double semantic) {
+        super(semantic);
         this.document = document;
         this.sentence = sentence;
-        this.semantic = semantic;
     }
 
     public Document getDocument() {
@@ -43,16 +42,11 @@ public class SentenceInfo implements Comparable<SentenceInfo>{
         return sentence;
     }
     
-    
-    public double getSemantic() {
-        return semantic;
-    }
-
     @Override
-    public int compareTo(SentenceInfo o) {
-        return (int) (o.semantic * 1000 - semantic * 1000);
+    public boolean isSentence(){
+        return true;
     }
-
+    
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

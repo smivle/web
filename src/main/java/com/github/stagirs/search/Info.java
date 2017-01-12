@@ -15,30 +15,35 @@
  */
 package com.github.stagirs.search;
 
-import com.github.stagirs.common.model.Document;
-
 /**
  *
  * @author Dmitriy Malakhov
  */
-public class DocumentInfo extends Info{
-    private Document document;
+public class Info implements Comparable<Info>{
+    private double semantic;
 
-    public DocumentInfo(Document document, double semantic) {
-        super(semantic);
-        this.document = document;
+    public Info(double semantic) {
+        this.semantic = semantic;
+    }
+    
+    public boolean isSentence(){
+        return false;
+    }
+    
+    public boolean isSection(){
+        return false;
+    }
+    
+    public boolean isDocument(){
+        return false;
     }
 
-    public Document getDocument() {
-        return document;
-    }
-
-    public void setDocument(Document document) {
-        this.document = document;
+    public double getSemantic() {
+        return semantic;
     }
     
     @Override
-    public boolean isDocument(){
-        return true;
+    public int compareTo(Info o) {
+        return (int) (o.semantic * 1000 - semantic * 1000);
     }
 }

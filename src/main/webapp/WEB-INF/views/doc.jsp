@@ -18,13 +18,13 @@
     <title>STAGIRS</title>
     <script src="static/jquery/jquery.js"></script>
     <link rel="stylesheet" href="static/awesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.11.2/css/bootstrap-select.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.11.2/js/bootstrap-select.min.js"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="static/bootstrap-select.min.css">
+    <script src="static/bootstrap-select.min.js"></script>
+    <link rel="stylesheet" href="static/bootstrap.min.css">
+    <script src="static/jquery.min.js"></script>
+    <script src="static/bootstrap.min.js"></script>
     <script src="static/overlay/loadingoverlay.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+    <script src="static/angular.min.js"></script>
     <link href="static/nouislider/nouislider.min.css" rel="stylesheet">
     <script src="static/nouislider/nouislider.min.js"></script>
     <style>
@@ -71,6 +71,13 @@
             font-style: italic;
             font-family: serif;
             margin: 20px;
+        }
+        .keyword{
+            text-decoration: underline;
+            font-weight: bold;    
+        }
+        i{
+            text-indent: 0px;
         }
     </style>
     <script>
@@ -132,7 +139,12 @@
             $('.selectpicker').change(function(){
                 $("#search-button").click();
             });
-            
+            $("#query").keypress(function (e) {
+                if (e.which == 13) {
+                  $("#search-button").click();
+                  return false;    //<---- Add this line
+                }
+              });
             
             $( "i" ).tooltip();
         });
@@ -141,7 +153,7 @@
 <body ng-controller="AppController">
     <div class="meta">
         <div class="title">${doc.title}</div>
-        <div class="thanks">${doc.thanks}</div>
+        <div class="thanks">${doc.thanks.replaceAll('<.*?>', '')}</div>
         <div class="author">${doc.author}</div>
         <div class="info">${doc.classifier}; ${doc.output}</div>
         <input id="minShow" type="text" ng-model="minShow" style="display: none">
@@ -150,7 +162,7 @@
         <div style="display: inline-block; vertical-align: top; width:450px;">
             <label>Фильтр по тексту предложения:</label>   
             <div>
-                <input type="text" class="form-control" style="width:400px;margin-right: 5px;display: inline-block;" ng-model="text">
+                <input id="query" type="text" class="form-control" style="width:400px;margin-right: 5px;display: inline-block;" ng-model="text">
                 <button ng-click="update()" id="search-button" type="button" class="btn btn-info"><i class="fa fa-search" data-original-title="" title=""></i></button>
             </div>
         </div>

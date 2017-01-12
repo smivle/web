@@ -25,6 +25,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,15 +55,21 @@ public class MainContriller {
     
     @RequestMapping("/searchTags")
     public String searchTags(Model model, @RequestParam(value="query", required=false, defaultValue="") String query) {
+        Query q = new Query(query);
+        model.addAttribute("type", "searchTags");
         model.addAttribute("query", query);
-        model.addAttribute("tags", query.isEmpty() ? null: executor.sentences(new Query(query)));
+        model.addAttribute("keywords", "(" + StringUtils.join(executor.getKeywords(q), "|") + ")");
+        model.addAttribute("items", query.isEmpty() ? null: executor.sentences(q));
         return "search";
     }
     
     @RequestMapping("/searchDocs")
     public String searchDocs(Model model, @RequestParam(value="query", required=false, defaultValue="") String query) {
+        Query q = new Query(query);
+        model.addAttribute("type", "searchDocs");
         model.addAttribute("query", query);
-        model.addAttribute("tags", query.isEmpty() ? null: executor.docs(new Query(query)));
+        model.addAttribute("keywords", "(" + StringUtils.join(executor.getKeywords(q), "|") + ")");
+        model.addAttribute("items", query.isEmpty() ? null: executor.docs(q));
         return "search";
     }
     
@@ -70,8 +77,10 @@ public class MainContriller {
     public String doc(Model model, 
             @RequestParam(value="docId", defaultValue="") String docId,
             @RequestParam(value="query", defaultValue="") String query) {
+        Query q = new Query(query);
         model.addAttribute("query", query);
-        model.addAttribute("sentenceIds", query.isEmpty() ? null: executor.sentencesForDoc(docId, new Query(query)));
+        model.addAttribute("keywords", "(" + StringUtils.join(executor.getKeywords(q), "|") + ")");
+        model.addAttribute("sentenceIds", query.isEmpty() ? null: executor.sentencesForDoc(docId, q));
         model.addAttribute("doc", executor.getDocument(docId));
         return "doc";
     }

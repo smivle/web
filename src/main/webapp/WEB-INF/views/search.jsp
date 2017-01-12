@@ -4,7 +4,6 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link rel="stylesheet" href="static/font-awesome/css/font-awesome.min.css">
         <script type="text/x-mathjax-config">
             MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
         </script>
@@ -12,97 +11,140 @@
           src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
         </script>
         <title>STAGIRS</title>
+        <script src="static/jquery/jquery.js"></script>
+        <link rel="stylesheet" href="static/awesome/css/font-awesome.min.css">
+        <link rel="stylesheet" href="static/bootstrap-select.min.css">
+        <script src="static/bootstrap-select.min.js"></script>
+        <link rel="stylesheet" href="static/bootstrap.min.css">
+        <script src="static/jquery.min.js"></script>
+        <script src="static/bootstrap.min.js"></script>
+        <script src="static/overlay/loadingoverlay.js"></script>
+        <script src="static/angular.min.js"></script>
+        <link href="static/nouislider/nouislider.min.css" rel="stylesheet">
+        <script src="static/nouislider/nouislider.min.js"></script>
         <style>
-            input.query{
+            body{
+                background-color: #f1f1f1
+            }
+            .body{
+                width:1024px;
+                margin: 20px auto;
                 font-size: 20px;
-                padding: 5px;
-                max-width: 600px;
-                width: 90%;
-                border-color: #88a;
-            }
-            input.query:hover{
-                border-color: #335;
-            }    
-            .query-button{
-                color: #335;
-                font-size: 30px;
-                cursor: pointer;
-            }
-            .query-button:hover{
-                color: #668;
-            }    
-            .tag-block{
-                display: inline-block;
+                font-family: serif;
                 border-radius: 5px;
                 background-color: #fff;
-                padding: 10px;
-                margin: 10px;
+                padding: 20px
             }
-            .tag-block-text{
-                width: 500px;
-                height: 200px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                text-align: left
+            .meta{
+                width:1024px;
+                margin: 20px auto;
+                text-align: center; 
             }
-            .result{
-                text-align: center;
-                margin: 20px;
+            p {
+                text-indent: 40px; 
+                text-align: left;
             }
-            .doc-link{
-                text-decoration: none;
-                color: #335;
-            }
-            span.latex{
-                margin-left: 5px;
-                margin-right: 5px;
-            }
-            .keyword{
+            .title{
+                font-size: 22px;
+                font-family: serif;
                 font-weight: bold;
             }
-        </style>  
-        <script src="static/js/jquery-2.0.3.min.js"></script>
+            .thanks{
+                font-size: 13px;
+                font-style: italic;
+                font-family: serif;
+                margin: 20px;
+            }
+            .author{
+                font-size: 20px;
+                font-family: serif;
+                font-weight: bold;
+                margin: 20px;
+            }
+            .info{
+                font-size: 15px;
+                font-style: italic;
+                font-family: serif;
+                margin: 20px;
+            }
+            .keyword{
+                text-decoration: underline;
+                font-weight: bold;    
+            }
+            i{
+                text-indent: 0px;
+            }
+        </style>
         <script>
             $(document).ready(function(){
                 $(".query-button").click(function(){
-                    window.location = "search?query=" + $(".query").val();
+                    window.location = "${type}?query=" + $(".query").val();
                 });
-                var regex = new RegExp('('+ '${query}'.replace(/ /g,'|') +')', 'ig');
-                $.each($(".tag-block-text"), function (k, v){
-                    $(v).html($(v).html().replace(regex, '<span class="keyword">$1</span>'));
+                $(".query").keypress(function (e) {
+                    if (e.which == 13) {
+                      $("#query-button").click();
+                      return false;    //<---- Add this line
+                    }
                 });
             });
             
         </script>    
     </head>
     <body style="margin: 0 auto;    background-color: #f1f1f1;">
-        <div style="height: 40px; background-color: #335;">
-            <a href="searchDocs" style="color: #fff; text-decoration: none; font-size: 30px; font-weight: bold; font-family: sans-serif;">
+        <div class="meta">
+            <a href="searchDocs" style="color: #5bc0de; text-decoration: none; font-size: 30px; font-weight: bold; font-family: sans-serif;float: left">
                 STAGIRS
             </a>
-            <span style="float: right; line-height: 40px;font-size: 30px; margin-right: 20px">
-                <a href="search" style="color: #fff;">
-                    <i class="fa fa-bars" aria-hidden="true"></i>
-                </a>
-            </span>    
+            <div style="text-align: center;margin-top:20px;display: inline-block">
+                <input class="query form-control" type="text" value="${query}" style="width:400px;margin-right: 5px;display: inline-block;" ng-model="text">
+                <button class="query-button btn btn-info" type="button"><i class="fa fa-search" data-original-title="" title=""></i></button>
+            </div>
+            <c:if test="${not empty items}">
+            <div style="font-size: 15px; font-weight: bold; font-family: sans-serif;display: inline-block;margin-left:20px">
+                Результаты: ${items.size()}
+            </div>   
+            </c:if>
+            <c:if test="${type eq 'searchDocs'}">
+                <a href="searchTags?query=${query}" style="margin-left: 20px">Искать теги...</a>
+            </c:if>    
+            <c:if test="${type eq 'searchTags'}">
+                <a href="searchDocs?query=${query}" style="margin-left: 20px">Искать документы...</a>
+            </c:if>      
         </div>
-        <div style="text-align: center;margin-top:20px">
-            <input class="query" type="text" value="${query}">
-            <span class="query-button">
-                <i class="fa fa-search" aria-hidden="true"></i>
-            </span>    
-        </div>
-        <div class="result">
-            <c:forEach items="${tags}" var="tag">
-                <div class="tag-block">
-                    <div class="tag-block-text">
-                        ${tag.toString()}
+        
+        
+            <c:forEach items="${items}" var="item">
+                <div class="body">
+                <c:if test="${item.isSentence()}">
+                    <div class="sentence-block">
+                        <div class="title"><a href="doc?docId=${item.getDocument().id}#sentence${item.getSentence().number}">${item.getDocument().title}</a></div>
+                        <span class="sentence"  number="${item.getSentence().number}" >
+                            <c:forEach items="${item.getSentence().parts}" var="part">
+                                <c:if test="${empty part.className}">${part.text.replaceAll(keywords, "<span class='keyword'>$1</span>")}</c:if>
+                                <c:if test="${not empty part.className}"><span class="${part.className}" ng-non-bindable>${part.text}</span></c:if>
+                            </c:forEach>
+                        </span>
                     </div>
-                    <div>
-                        <a class="doc-link" href="doc?id=${tag.document.id}&query=${query}">Перейти к документу ...</a>
+                </c:if>
+                <c:if test="${item.isDocument()}">
+                    <div class="doc-block">
+                        <div class="title"><a href="doc?docId=${item.getDocument().id}">${item.getDocument().title}</a></div>
+                        <div class="thanks">${item.getDocument().thanks}</div>
+                        <div class="author" style="display: inline-block">${item.getDocument().author}</div>
+                        <div class="info" style="display: inline-block">${item.getDocument().classifier}; ${item.getDocument().output}</div>
                     </div>
-                </div>
-            </c:forEach>    
-        </div>    
+                </c:if>
+                <c:if test="${item.isSection()}">
+                    <div class="section-block">
+                        <div class="title"><a href="doc?docId=${item.getDocument().id}">${item.getDocument().title}</a></div>
+                        <div class="thanks">${item.getDocument().thanks}</div>
+                        <div class="author" style="display: inline-block">${item.getDocument().author}</div>
+                        <div class="info" style="display: inline-block">${item.getDocument().classifier}; ${item.getDocument().output}</div>
+                        <div class="section-title">Раздел: ${item.getSection().title}</div>
+                    </div>
+                </c:if>
+                </div> 
+            </c:forEach> 
+           
     </body>
 </html>

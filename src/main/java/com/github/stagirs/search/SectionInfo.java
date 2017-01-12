@@ -22,14 +22,13 @@ import com.github.stagirs.common.model.Section;
  *
  * @author Dmitriy Malakhov
  */
-public class SectionInfo implements Comparable<SectionInfo>{
+public class SectionInfo extends Info{
     private Document document;
     private Section section;
-    private double semantic;
 
     public SectionInfo(Document document, Section section, double semantic) {
+        super(semantic);
         this.document = document;
-        this.semantic = semantic;
         this.section = section;
     }
 
@@ -41,18 +40,13 @@ public class SectionInfo implements Comparable<SectionInfo>{
         this.document = document;
     }
     
-    public double getSemantic() {
-        return semantic;
-    }
 
     public Section getSection() {
         return section;
     }
     
-    
-    
     @Override
-    public int compareTo(SectionInfo o) {
-        return (int) (o.semantic * 1000 - semantic * 1000);
+    public boolean isSection(){
+        return true;
     }
 }
